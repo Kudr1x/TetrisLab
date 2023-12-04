@@ -1,43 +1,25 @@
-#include <random>
-#include <iostream>
 #include <chrono>
+#include <iostream>
+#include <random>
 #include <thread>
 #include <conio.h>
+#include "cmake-build-debug/settings.cpp"
 
-const int BOARD_WIDTH = 10;
-const int BOARD_HEIGHT = 20;
-const int SHAPE_TYPES = 7;
-const int SHAPE_SIZE = 4;
-
-int sleepTime = 1000;
-int score = 0;
-bool gameOver = false;
-
-const int tetraminoTypes[SHAPE_TYPES][SHAPE_SIZE]{
-        {1, 3, 5, 7},
-        {0, 2, 3, 5},
-        {1, 3, 2, 4},
-        {1, 3, 2, 5},
-        {0, 1, 3, 5},
-        {1, 3, 5, 4},
-        {0, 1, 2, 3}
-};
-
-class Tetramino{
+class Tetramino {
 private:
-     int field[SHAPE_SIZE][SHAPE_SIZE]{};
-     bool collision = false;
-     int dx = 0;
-     int dy = 0;
+    int tetraminoGrid[SHAPE_SIZE][SHAPE_SIZE]{};
+    int type;
+    int dx = 0;
+    int dy = 0;
 public:
     Tetramino(){
         std::random_device rd;
         std::mt19937 gen(rd());
 
-        int type = gen() % SHAPE_TYPES;
+        type = gen() % SHAPE_TYPES;
 
         for(int i = 0; i < SHAPE_SIZE; i++){
-            field[tetraminoTypes[type][i] / 2][tetraminoTypes[type][i] % 2] = 1;
+            tetraminoGrid[tetraminoTypes[type][i] / 2][tetraminoTypes[type][i] % 2] = 1;
         }
     }
 
@@ -46,13 +28,13 @@ public:
 
         for(int i = 0; i < SHAPE_SIZE; i++) {
             for(int j = 0; j < SHAPE_SIZE; j++) {
-                temp[i][j] = field[SHAPE_SIZE - 1 - j][i];
+                temp[i][j] = tetraminoGrid[SHAPE_SIZE - 1 - j][i];
             }
         }
 
         for(int i = 0; i < SHAPE_SIZE; i++) {
             for(int j = 0; j < SHAPE_SIZE; j++) {
-                field[i][j] = temp[i][j];
+                tetraminoGrid[i][j] = temp[i][j];
             }
         }
     }
@@ -62,93 +44,117 @@ public:
 
         for (int i = 0; i < SHAPE_SIZE; i++) {
             for (int j = 0; j < SHAPE_SIZE; j++) {
-                temp[SHAPE_SIZE - 1 - j][i] = field[i][j];
+                temp[SHAPE_SIZE - 1 - j][i] = tetraminoGrid[i][j];
             }
         }
 
         for(int i = 0; i < SHAPE_SIZE; i++) {
             for(int j = 0; j < SHAPE_SIZE; j++) {
-                field[i][j] = temp[i][j];
+                tetraminoGrid[i][j] = temp[i][j];
             }
         }
     }
 
-    void setDx(int dx){
-        this->dx = dx;
+
+    int getByIndex(int i, int j) {
+        return tetraminoGrid[i][j];
     }
 
-    void setDy(int dy){
-        this->dy = dy;
+    int getType() {
+        return type;
     }
 
-    int getDx(){
+    int getDx() {
         return dx;
     }
 
-    int getDy(){
-        return dy;
+    int getDy() {
+        return dy + 1;
     }
 
-    bool getCollision(){
-        return collision;
+    void setDx(int dx) {
+        this->dx = dx;
     }
 
-    bool setCollision(){
-        collision = true;
+    int setDy(int dy) {
+        this->dy = dy;
     }
 
-    int get(int i, int j){
-        return field[i][j];
+    void plusDy() {
+        dy++;
     }
 };
 
-class Board{
-private:
-    int board[BOARD_HEIGHT][BOARD_WIDTH] = {};
-    int tempBoard[BOARD_HEIGHT][BOARD_WIDTH] = {};
+class Board {
+protected:
+    int currentBoard[HEIGHT][WIDTH]{};
+    int newBoard[HEIGHT][WIDTH]{};
 public:
-    void printBoard(){
-        for(int i = 0; i < BOARD_HEIGHT; i++){
-            for(int j = 0; j < BOARD_WIDTH; j++){
-                std::cout << board[i][j];
-            }
-            std::cout << std::endl;
+    Board() {
+        for(int i = 0; i < WIDTH; i++) {
+            currentBoard[HEIGHT - 1][i] = WALL;
+            currentBoard[0][i] = WALL;
+        }
+
+        for(int i = 0; i < HEIGHT; i++) {
+            currentBoard[i][0] = WALL;
+            currentBoard[i][WIDTH - 1] = WALL;
         }
     }
 
-    void addToBoard(Tetramino tetramino){
-        for(int i = 0; i < BOARD_HEIGHT; i++){
-            for(int j = 0; j < BOARD_WIDTH; j++){
-                tempBoard[i][j] = board[i][j];
+    void printBoard() {
+        for(int i = 0; i < HEIGHT; i++) {
+            for(int j = 0; j < WIDTH; j++) {
+                std::cout << currentBoard[i][j];
             }
+            std::cout << std::endl;
         }
 
-        while (!tetramino.getCollision()){
-            for(int i = 0; i < BOARD_HEIGHT; i++){
-                for(int j = 0; j < BOARD_WIDTH; j++){
-                    board[i][j] = tempBoard[i][j];
+        std::cout << "==========================" << std::endl;
+    }
+
+    void addTetraminoOnBoard(Tetramino tetramino) {
+
+        //todo костыль
+        int space = 1;
+        if(tetramino.getType() == 0) {
+            space = 0;
+        }
+
+        while (true) {
+            for(int i = 0 + space; i < SHAPE_SIZE; i++) {
+                for(int j = 0; j < SHAPE_SIZE; j++) {
+                    if(currentBoard[i - space + tetramino.getDy() - 1][j + WIDTH / 2 - 2 + tetramino.getDx() - 1] != 2) {
+                        currentBoard[i - space + tetramino.getDy() - 1][j + WIDTH / 2 - 2 + tetramino.getDx() - 1] = 0;
+                    }
                 }
             }
 
-            for(int i = 0; i < 4; i++){
-                for(int j = 0; j < 4; j ++){
-                    board[i + tetramino.getDx()][j + BOARD_WIDTH / 2 - 2 + tetramino.getDy()] = tetramino.get(i, j);
+            for(int i = 0 + space; i < SHAPE_SIZE; i++) {
+                for(int j = 0; j < SHAPE_SIZE; j++) {
+                    currentBoard[i - space + tetramino.getDy()][j + WIDTH / 2 - 2 + tetramino.getDx()] += tetramino.getByIndex(i, j);
                 }
             }
 
-            std::this_thread::sleep_for(std::chrono::milliseconds(sleepTime));
+            printBoard();
 
-            tetramino.setDx(tetramino.getDx() + 1);
+            if(checkDrop(tetramino, space)) {
+                tetramino.plusDy();
+            }else {
+                break;
+            };
+
+            std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
             if(_kbhit()){
                 int event = _getch();
 
                 switch (event) {
                     case 'a':
-                        tetramino.setDy(tetramino.getDy() - 1);
+                        if(checkMove(tetramino, space, -1)) tetramino.setDx(tetramino.getDx() - 1);
                         break;
                     case 'd':
-                        tetramino.setDy(tetramino.getDy() + 1);
+                        if(checkMove(tetramino, space, 1)) tetramino.setDx(tetramino.getDx() + 1);
                         break;
                     case 'q':
                         tetramino.rotateAntiClockwiseTetramino();
@@ -158,16 +164,87 @@ public:
                         break;
                 }
             }
+        }
+    }
 
-            std::cout << "===================================" << std::endl;
-            printBoard();
+    bool checkDrop(Tetramino tetramino, int d) {
+        for(int i = 0; i < HEIGHT; i++) {
+            for(int j = 0; j < WIDTH; j++) {
+                newBoard[i][j] = currentBoard[i][j];
+            }
+        }
+
+        bool flagCollision = true;
+        for(int i = 0 + d; (i < SHAPE_SIZE) and flagCollision; i++) {
+            for(int j = 0; (j < SHAPE_SIZE) and flagCollision; j++) {
+                if(currentBoard[i - d + tetramino.getDy() + 1][j + WIDTH / 2 - 2 + tetramino.getDx()] + tetramino.getByIndex(i, j) == 3){
+                    flagCollision = false;
+                }
+            }
+        }
+
+        return flagCollision;
+    }
+
+    bool checkMove(Tetramino tetramino, int d, int move){
+        for(int i = 0; i < HEIGHT; i++){
+            for(int j = 0; j < WIDTH; j++){
+                newBoard[i][j] = currentBoard[i][j];
+            }
+        }
+
+        bool flagCollision = true;
+        for(int i = 0 + d; (i < SHAPE_SIZE) and flagCollision; i++) {
+            for(int j = 0; (j < SHAPE_SIZE) and flagCollision; j++) {
+                if(currentBoard[i - d + tetramino.getDy()][j + WIDTH / 2 - 2 + tetramino.getDx() + move] + tetramino.getByIndex(i, j) == 3){
+                    flagCollision = false;
+                }
+            }
+        }
+
+        return flagCollision;
+    }
+
+    void saveBoard() {
+        for(int i = 0; i < HEIGHT; i++) {
+            for(int j = 0; j < WIDTH; j++) {
+                if(currentBoard[i][j] == 1) currentBoard[i][j] = WALL;
+            }
+        }
+    }
+
+    bool checkFinishGame() {
+        return (currentBoard[1][4] != 0 or currentBoard[1][5] != 0);
+    }
+};
+
+class TetrisGame{
+private:
+    bool gameRunFlag;
+    Board board;
+public:
+    TetrisGame() {
+        gameRunFlag = true;
+    }
+
+    void finishGame() {
+        gameRunFlag = false;
+    }
+
+    void run() {
+        while (gameRunFlag) {
+            Tetramino tetramino;
+            board.addTetraminoOnBoard(tetramino);
+            board.saveBoard();
+
+            if(board.checkFinishGame()) {
+                finishGame();
+            }
         }
     }
 };
 
-
-int main(){
-    Tetramino tetramino;
-    Board board;
-    board.addToBoard(tetramino);
+int main() {
+    TetrisGame game;
+    game.run();
 }
