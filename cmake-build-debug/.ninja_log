@@ -1,6 +1,7 @@
 # ninja log v5
-5	1320	7234231570637411	CMakeFiles/TetrisLab.dir/main.cpp.obj	ec37f469133d08b4
-1321	1570	7234231573107605	TetrisLab.exe	25d4763c95624a9d
-17	107	7234236050678868	CMakeFiles/TetrisLab.dir/settings.cpp.obj	e3a9cbced9379395
-6	1455	7234236824239630	CMakeFiles/TetrisLab.dir/main.cpp.obj	ec37f469133d08b4
-1456	1660	7234236826225463	TetrisLab.exe	60c3cab346d30a57
+6	1648	7235585512953566	CMakeFiles/TetrisLab.dir/main.cpp.obj	ec37f469133d08b4
+1649	1864	7235585515293731	TetrisLab.exe	60c3cab346d30a57
+17	101	7235585282077726	CMakeFiles/TetrisLab.dir/settings.cpp.obj	135377f5a90a4c0a
+15	1132	7235587894826384	CMakeFiles/TetrisLab.dir/TetrisGame.cpp.obj	5c4891be0d0526d3
+6	1211	7235587895586552	CMakeFiles/TetrisLab.dir/main.cpp.obj	ec37f469133d08b4
+1211	1364	7235587897076525	TetrisLab.exe	cb49d8a8c7e6c5d2

@@ -55,8 +55,14 @@ build CMakeFiles/TetrisLab.dir/main.cpp.obj: CXX_COMPILER__TetrisLab_unscanned_D
   OBJECT_DIR = CMakeFiles\TetrisLab.dir
   OBJECT_FILE_DIR = CMakeFiles\TetrisLab.dir
 
-build CMakeFiles/TetrisLab.dir/settings.cpp.obj: CXX_COMPILER__TetrisLab_unscanned_Debug C$:/Users/max51/CLionProjects/TetrisLab/cmake-build-debug/settings.cpp || cmake_object_order_depends_target_TetrisLab
+build CMakeFiles/TetrisLab.dir/settings.cpp.obj: CXX_COMPILER__TetrisLab_unscanned_Debug C$:/Users/max51/CLionProjects/TetrisLab/settings.cpp || cmake_object_order_depends_target_TetrisLab
   DEP_FILE = CMakeFiles\TetrisLab.dir\settings.cpp.obj.d
+  FLAGS = -g -fdiagnostics-color=always
+  OBJECT_DIR = CMakeFiles\TetrisLab.dir
+  OBJECT_FILE_DIR = CMakeFiles\TetrisLab.dir
+
+build CMakeFiles/TetrisLab.dir/TetrisGame.cpp.obj: CXX_COMPILER__TetrisLab_unscanned_Debug C$:/Users/max51/CLionProjects/TetrisLab/TetrisGame.cpp || cmake_object_order_depends_target_TetrisLab
+  DEP_FILE = CMakeFiles\TetrisLab.dir\TetrisGame.cpp.obj.d
   FLAGS = -g -fdiagnostics-color=always
   OBJECT_DIR = CMakeFiles\TetrisLab.dir
   OBJECT_FILE_DIR = CMakeFiles\TetrisLab.dir
@@ -69,7 +75,7 @@ build CMakeFiles/TetrisLab.dir/settings.cpp.obj: CXX_COMPILER__TetrisLab_unscann
 #############################################
 # Link the executable TetrisLab.exe
 
-build TetrisLab.exe: CXX_EXECUTABLE_LINKER__TetrisLab_Debug CMakeFiles/TetrisLab.dir/main.cpp.obj CMakeFiles/TetrisLab.dir/settings.cpp.obj
+build TetrisLab.exe: CXX_EXECUTABLE_LINKER__TetrisLab_Debug CMakeFiles/TetrisLab.dir/main.cpp.obj CMakeFiles/TetrisLab.dir/settings.cpp.obj CMakeFiles/TetrisLab.dir/TetrisGame.cpp.obj
   FLAGS = -g
   LINK_LIBRARIES = -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
   OBJECT_DIR = CMakeFiles\TetrisLab.dir
