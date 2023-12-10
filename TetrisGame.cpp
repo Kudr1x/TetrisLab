@@ -2,63 +2,64 @@
 
 class TetrisGame {
 private:
-    bool gameIsFinish = false;
+    bool gameIsFinish = false;   //Флаг конца игры
 
-    sf::RenderWindow window;
+    sf::RenderWindow window;  //Окно игры
 
-    sf::Color currentColor;
-    sf::Color newColor;
+    sf::Color currentColor;   //Цвет текущего тетрамино на поле
+    sf::Color newColor;  //Цвет следующего тетрамино
 
-    std::vector<std::vector<int>> board;
-    std::vector<std::vector<int>> currentShape;
-    std::vector<std::vector<int>> newShape;
+    std::vector<std::vector<int>> board;   //Наш "Стакан"
+    std::vector<std::vector<int>> currentShape;  //Текущая тетрамино
+    std::vector<std::vector<int>> newShape;  //Следующая тетрамино
 
-    int currentX;
+    int currentX;   //Координаты текущего тетрамино
     int currentY;
-    int currentScope;
-    int currentLevel;
-    int currentDelayTime;
+    int currentScope;  //Текущий счёт игры
+    int currentLevel;   //Текущий уровень
+    int currentDelayTime;  //Задержка
 
-    bool flagFirstStart = true;
+    bool flagFirstStart = true;  //Флаг отвечающий за первую генерацию тетрамино
 
-    sf::Text textLevelLabel;
+    sf::Text textLevelLabel;  //Поля для отображения текста
     sf::Text textLevel;
     sf::Text textScopeLabel;
     sf::Text textScope;
 
-    sf::Font font;
+    sf::Font font;  //Шрифт для отрисовки
 
+    //Функция обновления игры
     void update() {
-        if (collides(currentShape, currentX, currentY + 1)) {
-            saveBoard();
-            removeLines();
-            spawnNewShape();
+        if (collides(currentShape, currentX, currentY + 1)) {  //Проверка на коллизию
+            saveBoard();  //Сохранение доски
+            removeLines();  //Удаление строк
+            spawnNewShape();  //Генерация новых тетрамино
 
-            if (collides(currentShape, currentX, currentY)) {
+            if (collides(currentShape, currentX, currentY)) {  //Проверка на завершение игры
                 gameIsFinish = true;
             }
         }
         else {
-            currentY++;
+            currentY++;  //Сдвиг тетрамино вниз
         }
     }
 
-    void rotateShapeClockwise() {
+    void rotateShapeClockwise() {   //Поворот фигуры по часовой стрелки
         std::vector<std::vector<int>> rotatedShape(currentShape[0].size(),
-                                                   std::vector<int>(currentShape.size(), 0));
+                                                   std::vector<int>(currentShape.size(), 0));  //Создание временного вектора
 
-        for (int row = 0; row < currentShape.size(); row++) {
+        for (int row = 0; row < currentShape.size(); row++) {  //Поворот тетрамино
             for (int col = 0; col < currentShape[row].size(); col++) {
                 rotatedShape[col][currentShape.size() - row - 1] = currentShape[row][col];
             }
         }
 
-        if (!collides(rotatedShape, currentX, currentY)) {
+        if (!collides(rotatedShape, currentX, currentY)) {  //Если не возникло коллизии, то изменяем
             currentShape = rotatedShape;
         }
     }
 
-    void rotateAntiShapeClockwise() {
+    void rotateAntiShapeClockwise() {   //Поворот против часовой стрелки
         std::vector<std::vector<int>> rotatedShape(currentShape[0].size(),
                                                    std::vector<int>(currentShape.size(), 0));
 
@@ -73,7 +74,7 @@ private:
         }
     }
 
-    void saveBoard() {
+    void saveBoard() {   //Сохранение доски
         for (int row = 0; row < currentShape.size(); ++row) {
             for (int col = 0; col < currentShape[row].size(); ++col) {
                 if (currentShape[row][col]) {
@@ -83,8 +84,8 @@ private:
         }
     }
 
-    void removeLines() {
-        int removeLineCounter = 0;
+    void removeLines() {  //Удаление полных строк
+        int removeLineCounter = 0;  //Счётчик удаленных линий за раз
         for (int row = HEIGHT - 1; row >= 0; row--) {
 
             bool full = true;
@@ -94,6 +95,7 @@ private:
                 }
             }
 
+            //Если полная удаляем
             if (full) {
                 removeLineCounter++;
                 for (int r = row; r > 0; r--) {
@@ -110,9 +112,10 @@ private:
             }
         }
 
-        addScore(removeLineCounter);
+        addScore(removeLineCounter);  //Добавляем счёт
     }
 
+    //Обновление скорости при изменении уровня
     void speedUpdate(){
         switch (currentLevel) {
             case LEVEL_ONE:
@@ -133,7 +136,7 @@ private:
         }
     }
 
-    void levelUpdate(){
+    void levelUpdate(){  //Обновление уровня в зависимости от счёта
         bool flagIsLevelUpdate = false;
 
         if(currentScope >= LEVEL_ONE_SCOPE and currentScope < LEVEL_TWO_SCOPE){
@@ -153,7 +156,7 @@ private:
         if(flagIsLevelUpdate) speedUpdate();
     }
 
-    void addScore(int removeLineCounter){
+    void addScore(int removeLineCounter){ //Добавление очков в зависимости от количества удаленных линий за раз
         int tempScope;
         bool flagScopeIsChange = false;
         switch (removeLineCounter) {
@@ -182,12 +185,12 @@ private:
         if(flagScopeIsChange) levelUpdate();
     }
 
-    void spawnNewShape() {
-        std::random_device rd;
+    void spawnNewShape() {  //Генерация новых фигур
+        std::random_device rd;  //Создание генератора случайных чисел
         std::mt19937 gen(rd());
-        std::uniform_int_distribution<> dis(0, SHAPES_LIST.size() - 1);
+        std::uniform_int_distribution<> dis(0, SHAPES_LIST.size() - 1);  //Установка ограничения
 
-        if(flagFirstStart){
+        if(flagFirstStart){  //При первом запуске генерируем 2 фигуры
             currentShape = SHAPES_LIST[dis(gen)];
             currentColor = COLOR_LIST[dis(gen)];
 
@@ -199,37 +202,38 @@ private:
 
             flagFirstStart = false;
         }else{
-            currentShape = newShape;
+            currentShape = newShape;  //Присвоение фигуры, которая была уже сгенерирована для пред просмотра
             currentColor = newColor;
 
             currentX = WIDTH / 2 - currentShape[0].size() / 2;
             currentY = 0;
 
-            newShape = SHAPES_LIST[dis(gen)];
+            newShape = SHAPES_LIST[dis(gen)];  //Генерация новой фигуры
             newColor = COLOR_LIST[dis(gen)];
         }
     }
 
-    bool collides(const std::vector<std::vector<int>>& shape, int offsetX, int offsetY) {
-        for (int row = 0; row < shape.size(); ++row) {
-            for (int col = 0; col < shape[row].size(); ++col) {
+    bool collides(const std::vector<std::vector<int>>& shape, int offsetX, int offsetY) {  //Проверка на коллизию
+        bool flagCollision = false;
+        for (int row = 0; row < shape.size() and !flagCollision; ++row) {
+            for (int col = 0; col < shape[row].size() and !flagCollision; ++col) {
                 if (shape[row][col] && (offsetX + col < 0 || offsetX + col >= WIDTH || offsetY + row >= HEIGHT || board[offsetX + col][offsetY + row])) {
-                    return true;
+                    flagCollision = !flagCollision;
                 }
             }
         }
 
-        return false;
+        return flagCollision;
     }
 
-    void processEvents() {
+    void processEvents() {  //Проверка событий
         sf::Event event{};
         while (window.pollEvent(event)) {
             if (event.type == sf::Event::Closed) {
                 window.close();
             }
 
-            else if (event.type == sf::Event::KeyPressed) {
+            else if (event.type == sf::Event::KeyPressed) { //Управление
                 if (event.key.code == sf::Keyboard::A and !collides(currentShape, currentX - 1, currentY)) {
                     currentX--;
                 }
@@ -254,7 +258,7 @@ private:
         }
     }
 
-    void render() {
+    void render() {  //Отображение GUI
         window.clear();
 
         renderBoard();
@@ -289,7 +293,7 @@ private:
         }
     }
 
-    void renderGUI(){
+    void renderGUI(){ //Отрисовка счёта, уровня, следующей фигуры
         sf::RectangleShape block(sf::Vector2f(2, HEIGHT * BLOCK_SIZE));
         block.setPosition(WIDTH * BLOCK_SIZE, 0);
         block.setFillColor(sf::Color::White);
@@ -330,21 +334,25 @@ private:
     }
 
 public:
+    //Конструктор класса
     TetrisGame():
             window(sf::VideoMode(WIDTH * BLOCK_SIZE + 250, HEIGHT * BLOCK_SIZE), "Tetris"){
         std::vector<std::vector<int>> temp(WIDTH, std::vector<int>(HEIGHT, 0));
         board = temp;
 
+        //Создание начальной фигуры
         spawnNewShape();
 
+        //Задание начальных параметров
         currentLevel = 1;
         currentScope = 0;
         currentDelayTime = DELAY_TIME_LEVEL_ONE;
     }
 
-    void runDialogWindow(){
+    void runDialogWindow(){  //Новое окно завершения игры
         sf::RenderWindow dialog(sf::VideoMode(DIALOG_WIDTH, DIALOG_HEIGHT), "Oh no!");
 
+        //Отрисовка счёта и надписи
         sf::Text finalScopeLabel;
         finalScopeLabel.setFont(font);
         finalScopeLabel.setString("Scope: ");
@@ -378,20 +386,21 @@ public:
         }
     }
 
+    //Запуск тетриса
     void run() {
         sf::Clock clock;
 
         while (window.isOpen()) {
-            sf::Time elapsed = clock.getElapsedTime();
+            sf::Time elapsed = clock.getElapsedTime();  //Счёт времени задержки
             if (elapsed.asMilliseconds() > currentDelayTime) {
                 update();
                 clock.restart();
             }
 
-            processEvents();
-            render();
+            processEvents();  //Обработчик событий
+            render();  //Отображения всего интерфейса
 
-            if(gameIsFinish){
+            if(gameIsFinish){  //Окно завершения игры при проигрыше
                 runDialogWindow();
             }
         }
