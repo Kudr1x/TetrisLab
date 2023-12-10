@@ -1,324 +1,398 @@
-#include <chrono>
-#include <iostream>
-#include <random>
-#include <thread>
-#include <conio.h>
 #include "settings.cpp"
 
-class Tetramino {
+class TetrisGame {
 private:
-    int tetraminoGrid[SHAPE_SIZE][SHAPE_SIZE]{};
-    int type;
-    int dx;
-    int dy;
-public:
-    Tetramino(){
-        std::random_device rd;
-        std::mt19937 gen(rd());
+    bool gameIsFinish = false;
 
-        type = gen() % SHAPE_TYPES;
+    sf::RenderWindow window;
 
-        for(int i = 0; i < SHAPE_SIZE; i++){
-            tetraminoGrid[tetraminoTypes[type][i] / 2][tetraminoTypes[type][i] % 2] = 1;
+    sf::Color currentColor;
+    sf::Color newColor;
+
+    std::vector<std::vector<int>> board;
+    std::vector<std::vector<int>> currentShape;
+    std::vector<std::vector<int>> newShape;
+
+    int currentX;
+    int currentY;
+    int currentScope;
+    int currentLevel;
+    int currentDelayTime;
+
+    bool flagFirstStart = true;
+
+    sf::Text textLevelLabel;
+    sf::Text textLevel;
+    sf::Text textScopeLabel;
+    sf::Text textScope;
+
+    sf::Font font;
+
+    void update() {
+        if (collides(currentShape, currentX, currentY + 1)) {
+            saveBoard();
+            removeLines();
+            spawnNewShape();
+
+            if (collides(currentShape, currentX, currentY)) {
+                gameIsFinish = true;
+            }
         }
-
-        dx = 0;
-        dy = 0;
+        else {
+            currentY++;
+        }
     }
 
-    void rotateClockwiseTetramino(){
-        int temp[SHAPE_SIZE][SHAPE_SIZE];
+    void rotateShapeClockwise() {
+        std::vector<std::vector<int>> rotatedShape(currentShape[0].size(),
+                                                   std::vector<int>(currentShape.size(), 0));
 
-        for(int i = 0; i < SHAPE_SIZE; i++) {
-            for(int j = 0; j < SHAPE_SIZE; j++) {
-                temp[i][j] = tetraminoGrid[SHAPE_SIZE - 1 - j][i];
+        for (int row = 0; row < currentShape.size(); row++) {
+            for (int col = 0; col < currentShape[row].size(); col++) {
+                rotatedShape[col][currentShape.size() - row - 1] = currentShape[row][col];
             }
         }
 
-        for(int i = 0; i < SHAPE_SIZE; i++) {
-            for(int j = 0; j < SHAPE_SIZE; j++) {
-                tetraminoGrid[i][j] = temp[i][j];
+        if (!collides(rotatedShape, currentX, currentY)) {
+            currentShape = rotatedShape;
+        }
+    }
+
+    void rotateAntiShapeClockwise() {
+        std::vector<std::vector<int>> rotatedShape(currentShape[0].size(),
+                                                   std::vector<int>(currentShape.size(), 0));
+
+        for (int row = 0; row < currentShape.size(); row++) {
+            for (int col = 0; col < currentShape[row].size(); col++) {
+                rotatedShape[currentShape[row].size() - col - 1][row] = currentShape[row][col];
+            }
+        }
+
+        if (!collides(rotatedShape, currentX, currentY)) {
+            currentShape = rotatedShape;
+        }
+    }
+
+    void saveBoard() {
+        for (int row = 0; row < currentShape.size(); ++row) {
+            for (int col = 0; col < currentShape[row].size(); ++col) {
+                if (currentShape[row][col]) {
+                    board[currentX + col][currentY + row] = 1;
+                }
             }
         }
     }
 
-    void rotateAntiClockwiseTetramino(){
-        int temp[SHAPE_SIZE][SHAPE_SIZE];
+    void removeLines() {
+        int removeLineCounter = 0;
+        for (int row = HEIGHT - 1; row >= 0; row--) {
 
-        for (int i = 0; i < SHAPE_SIZE; i++) {
-            for (int j = 0; j < SHAPE_SIZE; j++) {
-                temp[SHAPE_SIZE - 1 - j][i] = tetraminoGrid[i][j];
-            }
-        }
-
-        for(int i = 0; i < SHAPE_SIZE; i++) {
-            for(int j = 0; j < SHAPE_SIZE; j++) {
-                tetraminoGrid[i][j] = temp[i][j];
-            }
-        }
-    }
-
-
-    int getByIndex(int i, int j) {
-        return tetraminoGrid[i][j];
-    }
-
-    int getType() {
-        return type;
-    }
-
-    int getDx() {
-        return dx;
-    }
-
-    int getDy() {
-        return dy + 1;
-    }
-
-    void setDx(int dx) {
-        this->dx = dx;
-    }
-
-    int setDy(int dy) {
-        this->dy = dy;
-    }
-
-    void plusDy() {
-        dy++;
-    }
-};
-
-class Board {
-protected:
-    int currentBoard[HEIGHT][WIDTH]{};
-    int checkBoard[HEIGHT][WIDTH]{};
-    int baseBoard[HEIGHT][WIDTH]{};
-public:
-    Board() {
-        for(int i = 0; i < WIDTH; i++) {
-            currentBoard[HEIGHT - 1][i] = WALL;
-            currentBoard[0][i] = WALL;
-        }
-
-        for(int i = 0; i < HEIGHT; i++) {
-            currentBoard[i][0] = WALL;
-            currentBoard[i][WIDTH - 1] = WALL;
-        }
-    }
-
-    void printBoard() {
-        for(int i = 0; i < HEIGHT; i++) {
-            for(int j = 0; j < WIDTH; j++) {
-                std::cout << currentBoard[i][j];
-            }
-            std::cout << std::endl;
-        }
-
-        std::cout << "==========================" << std::endl;
-    }
-
-    void addTetraminoOnBoard(Tetramino tetramino) {
-
-        //todo костыль
-//        int space = 1;
-//        if(tetramino.getType() == 0) {
-//            space = 0;
-//        }
-
-        int space = 0;
-
-        for(int i = 0; i < HEIGHT; i++){
-            for(int j = 0; j < WIDTH; j++){
-                baseBoard[i][j] = currentBoard[i][j];
-            }
-        }
-
-        while (true) {
-            for(int i = 0; i < HEIGHT; i++) {
-                for(int j = 0; j < WIDTH; j++) {
-                    currentBoard[i][j] = baseBoard[i][j];
+            bool full = true;
+            for (int col = 0; col < WIDTH and full; col++) {
+                if (!board[col][row]) {
+                    full = false;
                 }
             }
 
-            for(int i = 0 + space; i < SHAPE_SIZE; i++) {
-                for(int j = 0; j < SHAPE_SIZE; j++) {
-                    currentBoard[i - space + tetramino.getDy()][j + WIDTH / 2 - 2 + tetramino.getDx()] += tetramino.getByIndex(i, j);
+            if (full) {
+                removeLineCounter++;
+                for (int r = row; r > 0; r--) {
+                    for (int col = 0; col < WIDTH; col++) {
+                        board[col][r] = board[col][r - 1];
+                    }
                 }
+
+                for (int col = 0; col < WIDTH; col++) {
+                    board[col][0] = 0;
+                }
+
+                row++;
             }
+        }
 
-            printBoard();
+        addScore(removeLineCounter);
+    }
 
-            if(checkDrop(tetramino, space)) {
-                tetramino.plusDy();
-            }else {
-                //todo убрать брик
+    void speedUpdate(){
+        switch (currentLevel) {
+            case LEVEL_ONE:
+                currentDelayTime = DELAY_TIME_LEVEL_ONE;
                 break;
-            };
 
-            std::this_thread::sleep_for(std::chrono::milliseconds(500));
-
-            if(_kbhit()){
-                int event = _getch();
-
-                switch (event) {
-                    case 'a':
-                        if(checkMove(tetramino, space, -1)) tetramino.setDx(tetramino.getDx() - 1);
-                        break;
-                    case 'd':
-                        if(checkMove(tetramino, space, 1)) tetramino.setDx(tetramino.getDx() + 1);
-                        break;
-                    case 'q':
-                        tetramino.rotateAntiClockwiseTetramino();
-                        break;
-                    case 'e':
-                        tetramino.rotateClockwiseTetramino();
-                        break;
-                }
-            }
-        }
-    }
-
-    bool checkDrop(Tetramino tetramino, int d) {
-        for(int i = 0; i < HEIGHT; i++) {
-            for(int j = 0; j < WIDTH; j++) {
-                checkBoard[i][j] = currentBoard[i][j];
-            }
-        }
-
-        bool flagCollision = true;
-        for(int i = 0 + d; (i < SHAPE_SIZE) and flagCollision; i++) {
-            for(int j = 0; (j < SHAPE_SIZE) and flagCollision; j++) {
-                if(currentBoard[i - d + tetramino.getDy() + 1][j + WIDTH / 2 - 2 + tetramino.getDx()] + tetramino.getByIndex(i, j) == 3){
-                    flagCollision = false;
-                }
-            }
-        }
-
-        return flagCollision;
-    }
-
-    bool checkMove(Tetramino tetramino, int d, int move){
-        for(int i = 0; i < HEIGHT; i++){
-            for(int j = 0; j < WIDTH; j++){
-                checkBoard[i][j] = currentBoard[i][j];
-            }
-        }
-
-        bool flagCollision = true;
-        for(int i = 0 + d; (i < SHAPE_SIZE) and flagCollision; i++) {
-            for(int j = 0; j < SHAPE_SIZE; j++) {
-                if(currentBoard[i - d + tetramino.getDy()][j + WIDTH / 2 - 2 + tetramino.getDx() + move] + tetramino.getByIndex(i, j) == 3){
-                    flagCollision = false;
-                }
-            }
-        }
-
-        return flagCollision;
-    }
-
-    int saveBoard() {
-        for(int i = 0; i < HEIGHT; i++) {
-            for(int j = 0; j < WIDTH; j++) {
-                if(currentBoard[i][j] == 1) currentBoard[i][j] = WALL;
-            }
-        }
-
-        int lineIndex = -1;
-        int lineCounter = 0;
-        for(int i = 1; i < HEIGHT - 1; i++){
-            int counter = 0;
-            for(int j = 1; j < WIDTH - 1; j++){
-                if(currentBoard[i][j] == WALL) counter++;
-            }
-
-            if(counter == WIDTH - 2) {
-                lineIndex = i;
-                lineCounter++;
-                for(int k = 1; k < WIDTH - 1; k++){
-                    currentBoard[i][k] = 0;
-                }
-            }
-        }
-
-        for(int k = lineIndex; k > 1 and lineIndex != -1; k--){
-            for(int j = 0; j < WIDTH; j++){
-                currentBoard[k][j] = currentBoard[k - 1][j];
-            }
-        }
-
-        return lineCounter;
-    }
-
-    bool checkFinishGame() {
-        return (currentBoard[1][4] != 0 or currentBoard[1][5] != 0);
-    }
-};
-
-class TetrisGame{
-private:
-    bool gameRunFlag;
-    Board board;
-    int scope;
-    int level;
-public:
-    TetrisGame() {
-        gameRunFlag = true;
-        scope = 0;
-    }
-
-    void changeScopeAndLvl(int lineCount){
-        int sum = 0;
-
-        switch (lineCount) {
-            case 1:
-                sum = addSumForOneLine;
+            case LEVEL_TWO:
+                currentDelayTime = DELAY_TIME_LEVEL_TWO;
                 break;
-            case 2:
-                sum = addSumForTwoLine;
+
+            case LEVEL_THREE:
+                currentDelayTime = DELAY_TIME_LEVEL_THREE;
                 break;
-            case 3:
-                sum = addSumForThreeLine;
+
+            case LEVEL_FOUR:
+                currentDelayTime = DELAY_TIME_LEVEL_FOUR;
                 break;
-            case 4:
-                sum = addSumForFourLine;
+        }
+    }
+
+    void levelUpdate(){
+        bool flagIsLevelUpdate = false;
+
+        if(currentScope >= LEVEL_ONE_SCOPE and currentScope < LEVEL_TWO_SCOPE){
+            currentLevel = LEVEL_ONE;
+            flagIsLevelUpdate = true;
+        }else if(currentScope >= LEVEL_TWO_SCOPE and currentScope < LEVEL_THREE_SCOPE){
+            currentLevel = LEVEL_TWO;
+            flagIsLevelUpdate = true;
+        }else if(currentScope >= LEVEL_THREE_SCOPE and currentScope < LEVEL_FOUR_SCOPE){
+            currentLevel = LEVEL_THREE;
+            flagIsLevelUpdate = true;
+        }else if(currentScope >= LEVEL_FOUR_SCOPE){
+            currentLevel = LEVEL_FOUR;
+            flagIsLevelUpdate = true;
+        }
+
+        if(flagIsLevelUpdate) speedUpdate();
+    }
+
+    void addScore(int removeLineCounter){
+        int tempScope;
+        bool flagScopeIsChange = false;
+        switch (removeLineCounter) {
+            case ONE_LINE:
+                tempScope = ONE_LINE_REWARD;
+                flagScopeIsChange = true;
+                break;
+            case TWO_LINE:
+                tempScope = TWO_LINE_REWARD;
+                flagScopeIsChange = true;
+                break;
+            case THREE_LINE:
+                tempScope = THREE_LINE_REWARD;
+                flagScopeIsChange = true;
+                break;
+            case FOUR_LINE:
+                tempScope = FOUR_LINE_REWARD;
+                flagScopeIsChange = true;
                 break;
             default:
-                sum = addSumDefault;
-                break;
+                tempScope = ZERO_LINE_REWARD;
         }
 
-        scope += sum;
+        currentScope += tempScope;
 
-        if(scope >= levelOneScope and scope < levelTwoScope){
-            level = LEVEL_1;
-        }
+        if(flagScopeIsChange) levelUpdate();
+    }
 
-        if(scope >= levelTwoScope and scope < levelThreeScope){
-            level = LEVEL_2;
-        }
+    void spawnNewShape() {
+        std::random_device rd;
+        std::mt19937 gen(rd());
+        std::uniform_int_distribution<> dis(0, SHAPES_LIST.size() - 1);
 
-        if(scope >= levelThreeScope and scope < levelFourScope){
-            level = LEVEL_3;
-        }
+        if(flagFirstStart){
+            currentShape = SHAPES_LIST[dis(gen)];
+            currentColor = COLOR_LIST[dis(gen)];
 
-        if(scope >= levelFourScope){
-            level = LEVEL_4;
+            newShape = SHAPES_LIST[dis(gen)];
+            newColor = COLOR_LIST[dis(gen)];
+
+            currentX = WIDTH / 2 - currentShape[0].size() / 2;
+            currentY = 0;
+
+            flagFirstStart = false;
+        }else{
+            currentShape = newShape;
+            currentColor = newColor;
+
+            currentX = WIDTH / 2 - currentShape[0].size() / 2;
+            currentY = 0;
+
+            newShape = SHAPES_LIST[dis(gen)];
+            newColor = COLOR_LIST[dis(gen)];
         }
     }
 
-    void finishGame() {
-        gameRunFlag = false;
-        std::cout << "Scope: " << scope << std::endl;
+    bool collides(const std::vector<std::vector<int>>& shape, int offsetX, int offsetY) {
+        for (int row = 0; row < shape.size(); ++row) {
+            for (int col = 0; col < shape[row].size(); ++col) {
+                if (shape[row][col] && (offsetX + col < 0 || offsetX + col >= WIDTH || offsetY + row >= HEIGHT || board[offsetX + col][offsetY + row])) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    void processEvents() {
+        sf::Event event{};
+        while (window.pollEvent(event)) {
+            if (event.type == sf::Event::Closed) {
+                window.close();
+            }
+
+            else if (event.type == sf::Event::KeyPressed) {
+                if (event.key.code == sf::Keyboard::A and !collides(currentShape, currentX - 1, currentY)) {
+                    currentX--;
+                }
+                else if (event.key.code == sf::Keyboard::D and !collides(currentShape, currentX + 1, currentY)) {
+                    currentX++;
+                }
+                else if (event.key.code == sf::Keyboard::S and !collides(currentShape, currentX, currentY + 1)) {
+                    currentY++;
+                }
+                else if (event.key.code == sf::Keyboard::Q) {
+                    rotateAntiShapeClockwise();
+                }
+                else if (event.key.code == sf::Keyboard::E) {
+                    rotateShapeClockwise();
+                }
+                else if (event.key.code == sf::Keyboard::Space) {
+                    while (!collides(currentShape, currentX, currentY + 1)) {
+                        currentY++;
+                    }
+                }
+            }
+        }
+    }
+
+    void render() {
+        window.clear();
+
+        renderBoard();
+        renderGUI();
+
+        window.display();
+    }
+
+    void renderBoard(){
+        // Отрисовка поля
+        for (int row = 0; row < HEIGHT; ++row) {
+            for (int col = 0; col < WIDTH; ++col) {
+                if (board[col][row]) {
+                    sf::RectangleShape block(sf::Vector2f(BLOCK_SIZE, BLOCK_SIZE));
+                    block.setPosition(float(col * BLOCK_SIZE), float(row * BLOCK_SIZE));
+                    block.setFillColor(sf::Color::White);
+                    window.draw(block);
+                }
+            }
+        }
+
+        // Отрисовка текущей фигуры
+        for (int row = 0; row < currentShape.size(); ++row) {
+            for (int col = 0; col < currentShape[row].size(); ++col) {
+                if (currentShape[row][col]) {
+                    sf::RectangleShape block(sf::Vector2f(BLOCK_SIZE, BLOCK_SIZE));
+                    block.setPosition(float(currentX + col) * BLOCK_SIZE, float(currentY + row) * BLOCK_SIZE);
+                    block.setFillColor(currentColor);
+                    window.draw(block);
+                }
+            }
+        }
+    }
+
+    void renderGUI(){
+        sf::RectangleShape block(sf::Vector2f(2, HEIGHT * BLOCK_SIZE));
+        block.setPosition(WIDTH * BLOCK_SIZE, 0);
+        block.setFillColor(sf::Color::White);
+        window.draw(block);
+
+        font.loadFromFile("JetBrainsMono-Medium.ttf");
+
+        textLevelLabel.setFont(font);
+        textLevelLabel.setString("Level: ");
+        textLevelLabel.setPosition((WIDTH + 2) * BLOCK_SIZE, 2 * BLOCK_SIZE);
+        window.draw(textLevelLabel);
+
+        textLevel.setFont(font);
+        textLevel.setString(std::to_string(currentLevel));
+        textLevel.setPosition((WIDTH + 6) * BLOCK_SIZE, 2 * BLOCK_SIZE);
+        window.draw(textLevel);
+
+        textScopeLabel.setFont(font);
+        textScopeLabel.setString("Scope: ");
+        textScopeLabel.setPosition((WIDTH + 2) * BLOCK_SIZE, 4 * BLOCK_SIZE);
+        window.draw(textScopeLabel);
+
+        textScope.setFont(font);
+        textScope.setString(std::to_string(currentScope));
+        textScope.setPosition((WIDTH + 6) * BLOCK_SIZE, 4 * BLOCK_SIZE);
+        window.draw(textScope);
+
+        for (int row = 0; row < newShape.size(); ++row) {
+            for (int col = 0; col < newShape[row].size(); ++col) {
+                if (newShape[row][col]) {
+                    sf::RectangleShape block(sf::Vector2f(BLOCK_SIZE, BLOCK_SIZE));
+                    block.setPosition(float(13 + col) * BLOCK_SIZE, float(10 + row) * BLOCK_SIZE);
+                    block.setFillColor(newColor);
+                    window.draw(block);
+                }
+            }
+        }
+    }
+
+public:
+    TetrisGame():
+            window(sf::VideoMode(WIDTH * BLOCK_SIZE + 250, HEIGHT * BLOCK_SIZE), "Tetris"){
+        std::vector<std::vector<int>> temp(WIDTH, std::vector<int>(HEIGHT, 0));
+        board = temp;
+
+        spawnNewShape();
+
+        currentLevel = 1;
+        currentScope = 0;
+        currentDelayTime = DELAY_TIME_LEVEL_ONE;
+    }
+
+    void runDialogWindow(){
+        sf::RenderWindow dialog(sf::VideoMode(DIALOG_WIDTH, DIALOG_HEIGHT), "Oh no!");
+
+        sf::Text finalScopeLabel;
+        finalScopeLabel.setFont(font);
+        finalScopeLabel.setString("Scope: ");
+        finalScopeLabel.setPosition(0, 0);
+        dialog.draw(finalScopeLabel);
+
+        sf::Text finalScope;
+        finalScope.setFont(font);
+        finalScope.setString(std::to_string(currentScope));
+        finalScope.setPosition(120, 0);
+        dialog.draw(finalScope);
+
+        sf::Text rankLabel;
+        rankLabel.setFont(font);
+        rankLabel.setString(rankList[currentLevel - 1]);
+        rankLabel.setPosition(0, DIALOG_HEIGHT / 2);
+        dialog.draw(rankLabel);
+
+        dialog.display();
+
+        while (dialog.isOpen()){
+            // проверяем все события окна, которые были запущены после последней итерации цикла
+            sf::Event event{};
+            while (dialog.pollEvent(event)){
+                // если произошло событие Закрытие, закрываем наше окно
+                if (event.type == sf::Event::Closed) {
+                    dialog.close();
+                    window.close();
+                }
+            }
+        }
     }
 
     void run() {
-        while (gameRunFlag) {
-            Tetramino tetramino;
-            board.addTetraminoOnBoard(tetramino);
-            changeScopeAndLvl(board.saveBoard());
+        sf::Clock clock;
 
-            if(board.checkFinishGame()) {
-                finishGame();
+        while (window.isOpen()) {
+            sf::Time elapsed = clock.getElapsedTime();
+            if (elapsed.asMilliseconds() > currentDelayTime) {
+                update();
+                clock.restart();
+            }
+
+            processEvents();
+            render();
+
+            if(gameIsFinish){
+                runDialogWindow();
             }
         }
     }

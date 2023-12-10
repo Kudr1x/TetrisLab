@@ -411,3 +411,146 @@ events:
       
       
 ...
+
+---
+events:
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/JetBrains/CLion 2023.2.2/bin/cmake/win/x64/share/cmake-3.26/Modules/CheckIncludeFile.cmake:95 (try_compile)"
+      - "C:/Program Files/JetBrains/CLion 2023.2.2/bin/cmake/win/x64/share/cmake-3.26/Modules/CheckTypeSize.cmake:252 (check_include_file)"
+      - "cmake-build-debug/_deps/sfml-src/cmake/Config.cmake:10 (check_type_size)"
+      - "cmake-build-debug/_deps/sfml-src/CMakeLists.txt:41 (include)"
+    checks:
+      - "Looking for sys/types.h"
+    directories:
+      source: "C:/Users/max51/CLionProjects/TetrisLab/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-wk92ws"
+      binary: "C:/Users/max51/CLionProjects/TetrisLab/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-wk92ws"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_C_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_OSX_SYSROOT: ""
+      CMAKE_USER_MAKE_RULES_OVERRIDE: "C:/Users/max51/CLionProjects/TetrisLab/cmake-build-debug/_deps/sfml-src/cmake/CompilerOptionsOverride.cmake"
+    buildResult:
+      variable: "HAVE_SYS_TYPES_H"
+      cached: true
+      stdout: |
+        Change Dir: C:/Users/max51/CLionProjects/TetrisLab/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-wk92ws
+        
+        Run Build Command(s):C:/Program Files/JetBrains/CLion 2023.2.2/bin/ninja/win/x64/ninja.exe -v cmTC_2c3b3 && [1/2] C:\\PROGRA~1\\JETBRA~1\\CLION2~1.2\\bin\\mingw\\bin\\gcc.exe   -fdiagnostics-color=always -o CMakeFiles/cmTC_2c3b3.dir/CheckIncludeFile.c.obj -c C:/Users/max51/CLionProjects/TetrisLab/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-wk92ws/CheckIncludeFile.c
+        [2/2] cmd.exe /C "cd . && C:\\PROGRA~1\\JETBRA~1\\CLION2~1.2\\bin\\mingw\\bin\\gcc.exe   CMakeFiles/cmTC_2c3b3.dir/CheckIncludeFile.c.obj -o cmTC_2c3b3.exe -Wl,--out-implib,libcmTC_2c3b3.dll.a -Wl,--major-image-version,0,--minor-image-version,0  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 && cd ."
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/JetBrains/CLion 2023.2.2/bin/cmake/win/x64/share/cmake-3.26/Modules/CheckIncludeFile.cmake:95 (try_compile)"
+      - "C:/Program Files/JetBrains/CLion 2023.2.2/bin/cmake/win/x64/share/cmake-3.26/Modules/CheckTypeSize.cmake:253 (check_include_file)"
+      - "cmake-build-debug/_deps/sfml-src/cmake/Config.cmake:10 (check_type_size)"
+      - "cmake-build-debug/_deps/sfml-src/CMakeLists.txt:41 (include)"
+    checks:
+      - "Looking for stdint.h"
+    directories:
+      source: "C:/Users/max51/CLionProjects/TetrisLab/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-oe2x7c"
+      binary: "C:/Users/max51/CLionProjects/TetrisLab/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-oe2x7c"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_C_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_OSX_SYSROOT: ""
+      CMAKE_USER_MAKE_RULES_OVERRIDE: "C:/Users/max51/CLionProjects/TetrisLab/cmake-build-debug/_deps/sfml-src/cmake/CompilerOptionsOverride.cmake"
+    buildResult:
+      variable: "HAVE_STDINT_H"
+      cached: true
+      stdout: |
+        Change Dir: C:/Users/max51/CLionProjects/TetrisLab/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-oe2x7c
+        
+        Run Build Command(s):C:/Program Files/JetBrains/CLion 2023.2.2/bin/ninja/win/x64/ninja.exe -v cmTC_5ce85 && [1/2] C:\\PROGRA~1\\JETBRA~1\\CLION2~1.2\\bin\\mingw\\bin\\gcc.exe   -fdiagnostics-color=always -o CMakeFiles/cmTC_5ce85.dir/CheckIncludeFile.c.obj -c C:/Users/max51/CLionProjects/TetrisLab/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-oe2x7c/CheckIncludeFile.c
+        [2/2] cmd.exe /C "cd . && C:\\PROGRA~1\\JETBRA~1\\CLION2~1.2\\bin\\mingw\\bin\\gcc.exe   CMakeFiles/cmTC_5ce85.dir/CheckIncludeFile.c.obj -o cmTC_5ce85.exe -Wl,--out-implib,libcmTC_5ce85.dll.a -Wl,--major-image-version,0,--minor-image-version,0  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 && cd ."
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/JetBrains/CLion 2023.2.2/bin/cmake/win/x64/share/cmake-3.26/Modules/CheckIncludeFile.cmake:95 (try_compile)"
+      - "C:/Program Files/JetBrains/CLion 2023.2.2/bin/cmake/win/x64/share/cmake-3.26/Modules/CheckTypeSize.cmake:254 (check_include_file)"
+      - "cmake-build-debug/_deps/sfml-src/cmake/Config.cmake:10 (check_type_size)"
+      - "cmake-build-debug/_deps/sfml-src/CMakeLists.txt:41 (include)"
+    checks:
+      - "Looking for stddef.h"
+    directories:
+      source: "C:/Users/max51/CLionProjects/TetrisLab/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-9f1250"
+      binary: "C:/Users/max51/CLionProjects/TetrisLab/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-9f1250"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_C_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_OSX_SYSROOT: ""
+      CMAKE_USER_MAKE_RULES_OVERRIDE: "C:/Users/max51/CLionProjects/TetrisLab/cmake-build-debug/_deps/sfml-src/cmake/CompilerOptionsOverride.cmake"
+    buildResult:
+      variable: "HAVE_STDDEF_H"
+      cached: true
+      stdout: |
+        Change Dir: C:/Users/max51/CLionProjects/TetrisLab/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-9f1250
+        
+        Run Build Command(s):C:/Program Files/JetBrains/CLion 2023.2.2/bin/ninja/win/x64/ninja.exe -v cmTC_f2ff3 && [1/2] C:\\PROGRA~1\\JETBRA~1\\CLION2~1.2\\bin\\mingw\\bin\\gcc.exe   -fdiagnostics-color=always -o CMakeFiles/cmTC_f2ff3.dir/CheckIncludeFile.c.obj -c C:/Users/max51/CLionProjects/TetrisLab/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-9f1250/CheckIncludeFile.c
+        [2/2] cmd.exe /C "cd . && C:\\PROGRA~1\\JETBRA~1\\CLION2~1.2\\bin\\mingw\\bin\\gcc.exe   CMakeFiles/cmTC_f2ff3.dir/CheckIncludeFile.c.obj -o cmTC_f2ff3.exe -Wl,--out-implib,libcmTC_f2ff3.dll.a -Wl,--major-image-version,0,--minor-image-version,0  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 && cd ."
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/JetBrains/CLion 2023.2.2/bin/cmake/win/x64/share/cmake-3.26/Modules/CheckTypeSize.cmake:148 (try_compile)"
+      - "C:/Program Files/JetBrains/CLion 2023.2.2/bin/cmake/win/x64/share/cmake-3.26/Modules/CheckTypeSize.cmake:273 (__check_type_size_impl)"
+      - "cmake-build-debug/_deps/sfml-src/cmake/Config.cmake:10 (check_type_size)"
+      - "cmake-build-debug/_deps/sfml-src/CMakeLists.txt:41 (include)"
+    checks:
+      - "Check size of void*"
+    directories:
+      source: "C:/Users/max51/CLionProjects/TetrisLab/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-0yz1gr"
+      binary: "C:/Users/max51/CLionProjects/TetrisLab/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-0yz1gr"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_C_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_OSX_SYSROOT: ""
+      CMAKE_USER_MAKE_RULES_OVERRIDE: "C:/Users/max51/CLionProjects/TetrisLab/cmake-build-debug/_deps/sfml-src/cmake/CompilerOptionsOverride.cmake"
+    buildResult:
+      variable: "HAVE_SIZEOF_VOID_PTR"
+      cached: true
+      stdout: |
+        Change Dir: C:/Users/max51/CLionProjects/TetrisLab/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-0yz1gr
+        
+        Run Build Command(s):C:/Program Files/JetBrains/CLion 2023.2.2/bin/ninja/win/x64/ninja.exe -v cmTC_f2c14 && [1/2] C:\\PROGRA~1\\JETBRA~1\\CLION2~1.2\\bin\\mingw\\bin\\gcc.exe   -fdiagnostics-color=always -o CMakeFiles/cmTC_f2c14.dir/SIZEOF_VOID_PTR.c.obj -c C:/Users/max51/CLionProjects/TetrisLab/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-0yz1gr/SIZEOF_VOID_PTR.c
+        [2/2] cmd.exe /C "cd . && C:\\PROGRA~1\\JETBRA~1\\CLION2~1.2\\bin\\mingw\\bin\\gcc.exe   CMakeFiles/cmTC_f2c14.dir/SIZEOF_VOID_PTR.c.obj -o cmTC_f2c14.exe -Wl,--out-implib,libcmTC_f2c14.dll.a -Wl,--major-image-version,0,--minor-image-version,0  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 && cd ."
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/JetBrains/CLion 2023.2.2/bin/cmake/win/x64/share/cmake-3.26/Modules/CheckIncludeFile.cmake:95 (try_compile)"
+      - "cmake-build-debug/_deps/sfml-src/src/SFML/Window/CMakeLists.txt:334 (check_include_file)"
+    checks:
+      - "Looking for dinput.h"
+    directories:
+      source: "C:/Users/max51/CLionProjects/TetrisLab/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-d8n3m0"
+      binary: "C:/Users/max51/CLionProjects/TetrisLab/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-d8n3m0"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_C_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_MODULE_PATH: "C:/Users/max51/CLionProjects/TetrisLab/cmake-build-debug/_deps/sfml-src/cmake/Modules/"
+      CMAKE_OSX_SYSROOT: ""
+      CMAKE_USER_MAKE_RULES_OVERRIDE: "C:/Users/max51/CLionProjects/TetrisLab/cmake-build-debug/_deps/sfml-src/cmake/CompilerOptionsOverride.cmake"
+    buildResult:
+      variable: "DINPUT_H_FOUND"
+      cached: true
+      stdout: |
+        Change Dir: C:/Users/max51/CLionProjects/TetrisLab/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-d8n3m0
+        
+        Run Build Command(s):C:/Program Files/JetBrains/CLion 2023.2.2/bin/ninja/win/x64/ninja.exe -v cmTC_52a8a && [1/2] C:\\PROGRA~1\\JETBRA~1\\CLION2~1.2\\bin\\mingw\\bin\\gcc.exe   -fdiagnostics-color=always -o CMakeFiles/cmTC_52a8a.dir/CheckIncludeFile.c.obj -c C:/Users/max51/CLionProjects/TetrisLab/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-d8n3m0/CheckIncludeFile.c
+        [2/2] cmd.exe /C "cd . && C:\\PROGRA~1\\JETBRA~1\\CLION2~1.2\\bin\\mingw\\bin\\gcc.exe   CMakeFiles/cmTC_52a8a.dir/CheckIncludeFile.c.obj -o cmTC_52a8a.exe -Wl,--out-implib,libcmTC_52a8a.dll.a -Wl,--major-image-version,0,--minor-image-version,0  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 && cd ."
+        
+      exitCode: 0
+...
